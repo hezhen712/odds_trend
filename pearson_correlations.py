@@ -118,13 +118,16 @@ def winrate():
 	winrate = {}
 	act_res = {}
 	for i in mdic.keys():
-		res = comp_all(i)
-		winrate.update({mr[i]:res})
+		res = comp_all(i,mdic)
+		if res != {}:
+			reslist = []
+			for j in res.keys():
+				reslist.append(mr[j])
+			winrate.update({mr[i]:reslist})
 	return winrate
 
 		
-def comp_all(mn):	
-	mdic = get_mdic()
+def comp_all(mn,mdic):	
 	list1 = mdic[str(mn)]
 	com_res = {}
 	res = {}
@@ -132,7 +135,7 @@ def comp_all(mn):
 		if abs(len(mdic[i])-len(list1))<= 5 and i !=str(mn):
 			com_res.update({i:lst_cmp(list1,mdic[i])})
 	for j in com_res.keys():
-		if com_res[j] >0.5:
+		if com_res[j] >0.55:
 			res.update({j:com_res[j]})
 	return res
 	
