@@ -2,6 +2,7 @@ from math import sqrt
 import psycopg2
 import ast,sys
 from crawl_engine import now_ddlist
+from KL_cal import kl
 # from scores2ranks import scores2ranks
  
 def svar(X):
@@ -63,11 +64,14 @@ def comp_toall(mn):
 	mdic = get_mdic()
 	list1 = get_list(mn)
 	com_res = {}
+	res = {}
 	for i in mdic.keys():
 		if abs(len(mdic[i])-len(list1))<= 5:
 			com_res.update({i:lst_cmp(list1,mdic[i])})
-	
-	return com_res
+	for j in com_res.keys():
+		if com_res[j] >0.5:
+			res.update({j:com_res[j]})
+	return res
 
 def comp_now(mn):	
 	list1 = now_ddlist(mn)
@@ -152,8 +156,42 @@ def get_allresult():
 	return mr_dic
 		
 	
+def marco_comp(list1,list2):
+	weigh = 0
+	if abs(list1[0] - list2[0]) < 0.25:
+		weigh += 0.3
+	if abs(list1[-1] - list2[-1]) < 0.25:
+		weigh += 0.3
+	if lst_cmp(list1,list2) <= 0.4:
+		weigh += 0.5
+	return weigh
 	
+def marco_cmpall(mn,mdic):	
+	list1 = get_list(mn)
+	com_res = {}
+	res = {}
+	for i in mdic.keys():
+		if abs(len(mdic[i])-len(list1))<= 5 and i !=str(mn):
+			com_res.update({i:marco_comp(list1,mdic[i])})
+	for j in com_res.keys():
+		if com_res[j] >=0.4:
+			res.update({j:com_res[j]})
+	return res
+
+def winrate_mh():
+	mdic = get_mdic()
+	mr = get_allresult()
+	winrate = {}
+	act_res = {}
+	for i in mdic.keys():
+		res = marco_cmpall(i,mdic)
+		if res != {}:
+			reslist = []
+			for j in res.keys():
+				reslist.append(mr[j])
+			winrate.update({mr[i]:reslist})
+	return winrate
 	
-	
+
 #conn = psycopg2.connect(database='postgres',user='postgres',password='1985712',host= '54.186.47.255',options='-c statement_timeout=100')
 #cur = conn.cursor()
