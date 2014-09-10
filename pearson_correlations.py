@@ -2,7 +2,7 @@ from math import sqrt
 import psycopg2
 import ast,sys
 from crawl_engine import now_ddlist
-from KL_cal import kl
+import KL_cal as KL
 # from scores2ranks import scores2ranks
  
 def svar(X):
@@ -162,8 +162,8 @@ def marco_comp(list1,list2):
 		weigh += 0.3
 	if abs(list1[-1] - list2[-1]) < 0.25:
 		weigh += 0.3
-	if lst_cmp(list1,list2) <= 0.4:
-		weigh += 0.5
+	if KL.klcmp(list1,list2) <= 10:
+		weigh += 0.4
 	return weigh
 	
 def marco_cmpall(mn,mdic):	
@@ -171,10 +171,10 @@ def marco_cmpall(mn,mdic):
 	com_res = {}
 	res = {}
 	for i in mdic.keys():
-		if abs(len(mdic[i])-len(list1))<= 5 and i !=str(mn):
+		if abs(len(mdic[i])-len(list1))< 5 and i !=str(mn):
 			com_res.update({i:marco_comp(list1,mdic[i])})
 	for j in com_res.keys():
-		if com_res[j] >=0.4:
+		if com_res[j] >=1:
 			res.update({j:com_res[j]})
 	return res
 
@@ -193,5 +193,64 @@ def winrate_mh():
 	return winrate
 	
 
+
+def min_kl(mn):
+	mdic = get_mdic()
+	res = {}
+	res2 = {}
+	for i in mdic.keys():
+		res.update({i:KL.klcmp(mdic[str(mn)],mdic[i])})
+	return res
 #conn = psycopg2.connect(database='postgres',user='postgres',password='1985712',host= '54.186.47.255',options='-c statement_timeout=100')
 #cur = conn.cursor()
+
+
+def mres(mscore):
+	concedep = int(mscore[0])- int(mscore[2]) 
+	return concedep
+def res_jud(concedep,oodds):
+	if concedep>oodds:
+		return 'win'
+	if concedep<oodds:
+		return 'lose'
+	if concedep==oodds:
+		return 'draw'
+		
+def get_iodds():
+	conn = psycopg2.connect(database='postgres',user='postgres',password='1985712',host= '54.186.47.255',options='-c statement_timeout=10000')
+	cur = conn.cursor()
+	cur.execute("select mnumber,hodds from _odds_trend order by mnumber;")
+	modds = cur.fetchall()
+	cur.close()
+	conn.close()
+	mo_dic = {}
+	for i in modds:
+		t = list(i)[1].find("',")
+		mo_dic.update({list(i)[0]:list(i)[1][3:t]})
+	return mo_dic
+		
+
+	
+#conn = psycopg2.connect(database='postgres',user='postgres',password='1985712',host= '54.186.47.255',options='-c statement_timeout=10000')
+#cur = conn.cursor()
+#cur.execute("select mnumber,hodds from _odds_trend order by mnumber;")
+#modds = cur.fetchall()
+#cur.close()
+#conn.close()
+
+
+
+def winrate_mh1():
+	mdic = get_mdic()
+	mr = get_allresult()
+	mo = get_iodds()
+	winrate = {}
+	act_res = {}
+	for i in mdic.keys():
+		res = marco_cmpall(i,mdic)
+		if res != {}:
+			reslist = []
+			for j in res.keys():
+				reslist.append(res_jud(mres(mr[j]),mo[j]))
+			winrate.update({mr[i]:reslist})
+	return winrate
