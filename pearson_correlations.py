@@ -159,22 +159,22 @@ def get_allresult():
 def marco_comp(list1,list2):
 	weigh = 0
 	if abs(list1[0] - list2[0]) < 0.25:
-		weigh += 0.3
+		weigh += 0.1
 	if abs(list1[-1] - list2[-1]) < 0.25:
-		weigh += 0.3
-	if KL.klcmp(list1,list2) <= 10:
+		weigh += 0.1
+	if KL.klcmp(list1,list2) >= 0.998:
 		weigh += 0.4
 	return weigh
 	
 def marco_cmpall(mn,mdic):	
-	list1 = get_list(mn)
+	list1 = mdic[str(mn)]
 	com_res = {}
 	res = {}
 	for i in mdic.keys():
 		if abs(len(mdic[i])-len(list1))< 5 and i !=str(mn):
 			com_res.update({i:marco_comp(list1,mdic[i])})
 	for j in com_res.keys():
-		if com_res[j] >=1:
+		if com_res[j] >=0.5:
 			res.update({j:com_res[j]})
 	return res
 
@@ -206,12 +206,13 @@ def min_kl(mn):
 
 
 def mres(mscore):
-	concedep = int(mscore[0])- int(mscore[2]) 
+	concedep = int(mscore[0])- int(mscore[2])
+	concedep = -concedep
 	return concedep
 def res_jud(concedep,oodds):
-	if concedep>oodds:
-		return 'win'
 	if concedep<oodds:
+		return 'win'
+	if concedep>oodds:
 		return 'lose'
 	if concedep==oodds:
 		return 'draw'
@@ -251,6 +252,9 @@ def winrate_mh1():
 		if res != {}:
 			reslist = []
 			for j in res.keys():
-				reslist.append(res_jud(mres(mr[j]),mo[j]))
-			winrate.update({mr[i]:reslist})
+				reslist.append(res_jud(mres(mr[j]),float(mo[j])))
+			p = res_jud(mres(mr[i]),float(mo[i]))
+			winrate.update({i:reslist})
 	return winrate
+	
+#res_jud(mres(mr[i]),float(mo[i]))

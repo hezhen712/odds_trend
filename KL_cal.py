@@ -3,7 +3,7 @@ import math
 from math import log
 
 
-def kl(p, q):
+def kl111(p, q):
     p = np.asarray(p, dtype=np.float)
     q = np.asarray(q, dtype=np.float)
     return np.sum(np.where(p != 0,(p-q) * np.log10(p / q), 0))
@@ -33,3 +33,19 @@ def klcmp(list1,list2):
 	lstpadding(list1,list2)
 	res = kl(list1,list2)
 	return res
+	
+def kl(u, v):
+    """
+    Returns the cosine of the angle between vectors v and u. This is equal to
+    u.v / |u||v|.
+    """
+    return np.dot(u, v) / (math.sqrt(np.dot(u, u)) * math.sqrt(np.dot(v, v)))
+	
+
+
+
+
+
+
+
+
