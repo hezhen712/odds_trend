@@ -46,7 +46,11 @@ def pearsonrankcor(Rx,Ry):
     return 1 - 6 *sum([(x -y)**2 for x,y in zip(Rx,Ry)])/ (n* (n*n - 1))
 	
 def get_list(mn):
+<<<<<<< HEAD
 	conn = psycopg2.connect(database='postgres',user='postgres',password='1985712',host= '54.186.47.255',options='-c statement_timeout=100000')
+=======
+	conn = psycopg2.connect(database='postgres',user='postgres',password='1985712',host= '54.186.47.255',options='-c statement_timeout=50000')
+>>>>>>> origin/master
 	cur = conn.cursor()
 	gsql = "select ddlist from dd_table where matches = \'%s\'" %mn
 	cur.execute(gsql)
@@ -90,7 +94,11 @@ def comp_now(mn):
 	
 	
 def get_mdic():
+<<<<<<< HEAD
 	conn = psycopg2.connect(database='postgres',user='postgres',password='1985712',host= '54.186.47.255',options='-c statement_timeout=100000')
+=======
+	conn = psycopg2.connect(database='postgres',user='postgres',password='1985712',host= '54.186.47.255',options='-c statement_timeout=50000')
+>>>>>>> origin/master
 	cur = conn.cursor()
 	cur.execute("select matches from dd_table order by matches;")
 	mlist1 = cur.fetchall()
@@ -144,7 +152,11 @@ def comp_all(mn,mdic):
 	return res
 	
 def get_allresult():
+<<<<<<< HEAD
 	conn = psycopg2.connect(database='postgres',user='postgres',password='1985712',host= '54.186.47.255',options='-c statement_timeout=100000')
+=======
+	conn = psycopg2.connect(database='postgres',user='postgres',password='1985712',host= '54.186.47.255',options='-c statement_timeout=50000')
+>>>>>>> origin/master
 	cur = conn.cursor()
 	cur.execute("select mnumber,result from _odds_trend order by mnumber;")
 	mres = cur.fetchall()
@@ -158,12 +170,21 @@ def get_allresult():
 	
 def marco_comp(list1,list2):
 	weigh = 0
+<<<<<<< HEAD
 	if abs(list1[0] - list2[0]) < 0.25:
 		weigh += 0.1
 	if abs(list1[-1] - list2[-1]) < 0.25:
 		weigh += 0.2
 	if KL.klcmp(list1,list2) >= 0.999:
 		weigh += 0.3
+=======
+	if abs(list1[0] - list2[0]) < 0.1:
+		weigh += 0.3
+	if abs(list1[-1] - list2[-1]) < 0.1:
+		weigh += 0.3
+	#if KL.klcmp(list1,list2) <= 0.1:
+	#	weigh += 0.4
+>>>>>>> origin/master
 	return weigh
 	
 def marco_cmpall(mn,mdic):	
@@ -174,7 +195,7 @@ def marco_cmpall(mn,mdic):
 		if abs(len(mdic[i])-len(list1))< 5 and i !=str(mn):
 			com_res.update({i:marco_comp(list1,mdic[i])})
 	for j in com_res.keys():
-		if com_res[j] >=0.5:
+		if com_res[j] >=0.6:
 			res.update({j:com_res[j]})
 	return res
 
@@ -218,7 +239,11 @@ def res_jud(concedep,oodds):
 		return 'draw'
 		
 def get_iodds():
+<<<<<<< HEAD
 	conn = psycopg2.connect(database='postgres',user='postgres',password='1985712',host= '54.186.47.255',options='-c statement_timeout=100000')
+=======
+	conn = psycopg2.connect(database='postgres',user='postgres',password='1985712',host= '54.186.47.255',options='-c statement_timeout=50000')
+>>>>>>> origin/master
 	cur = conn.cursor()
 	cur.execute("select mnumber,hodds from _odds_trend order by mnumber;")
 	modds = cur.fetchall()
@@ -232,7 +257,11 @@ def get_iodds():
 		
 
 	
+<<<<<<< HEAD
 #conn = psycopg2.connect(database='postgres',user='postgres',password='1985712',host= '54.186.47.255',options='-c statement_timeout=100000')
+=======
+#conn = psycopg2.connect(database='postgres',user='postgres',password='1985712',host= '54.186.47.255',options='-c statement_timeout=50000')
+>>>>>>> origin/master
 #cur = conn.cursor()
 #cur.execute("select mnumber,hodds from _odds_trend order by mnumber;")
 #modds = cur.fetchall()
@@ -251,14 +280,25 @@ def winrate_mh1():
 		res = marco_cmpall(i,mdic)
 		if res != {}:
 			reslist = []
+			reslist.append(res_jud(mres(mr[i]),float(mo[i])))
 			for j in res.keys():
 				reslist.append(res_jud(mres(mr[j]),float(mo[j])))
+<<<<<<< HEAD
 			p = res_jud(mres(mr[i]),float(mo[i]))
 			winrate.update({mr[i]:reslist})
+=======
+			winrate.update({i:reslist})
+>>>>>>> origin/master
 	return winrate
 	
 #res_jud(mres(mr[i]),float(mo[i]))
 
+<<<<<<< HEAD
 
 def curve_cal(list1,list2):
 	max
+=======
+#mdic = get_mdic()
+#list1 = mdic['742222']
+#list2 = mdic['742223']
+>>>>>>> origin/master

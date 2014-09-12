@@ -34,7 +34,7 @@ def klcmp(list1,list2):
 	res = kl(list1,list2)
 	return res
 	
-def kl(u, v):
+def kl1(u, v):
     """
     Returns the cosine of the angle between vectors v and u. This is equal to
     u.v / |u||v|.
@@ -42,7 +42,14 @@ def kl(u, v):
     return np.dot(u, v) / (math.sqrt(np.dot(u, u)) * math.sqrt(np.dot(v, v)))
 	
 
-
+def kl(list1,list2):
+	i = 0
+	d = []
+	while i <len(list1):
+		differ = list1[i] - list2[i]
+		d.append(abs(differ))
+		i += 1
+	return sum(d)/len(d)
 
 
 
